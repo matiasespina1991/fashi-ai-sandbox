@@ -1,0 +1,25 @@
+# Builds, caches, deps
+.firebase/
+**/.next/
+node_modules/
+**/node_modules/
+out/
+dist/
+coverage/
+.cache/
+
+# Logs and env
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
