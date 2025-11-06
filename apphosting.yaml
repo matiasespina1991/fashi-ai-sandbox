@@ -15,18 +15,39 @@ env:
   # Replace 'GEMINI-API-KEY' with the name of the secret you create.
   - variable: GEMINI_API_KEY
     secret: GEMINI-API-KEY
+  # Firebase public config (client-side)
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyAGIt6V36jNaoVHUPWd0vldU2LtK_eCSBM"
+    availability:
+      - BUILD
+      - RUNTIME
 
-  # Firebase SDK configuration is automatically populated by App Hosting.
-  # You can uncomment and set these values to override the automatic configuration.
-  # - variable: NEXT_PUBLIC_FIREBASE_API_KEY
-  #   value: ''
-  # - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-  #   value: ''
-  # - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
-  #   value: ''
-  # - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-  #   value: ''
-  # - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-  #   value: ''
-  # - variable: NEXT_PUBLIC_FIREBASE_APP_ID
-  #   value: ''
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "gpguard-poc.firebaseapp.com"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "gpguard-poc"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "gpguard-poc.firebasestorage.app"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "755988850396"
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:755988850396:web:b1d4ec3f4e32919bddb619"
+    availability:
+      - BUILD
+      - RUNTIME
