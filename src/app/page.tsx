@@ -223,6 +223,25 @@ export default function TryOnPage() {
       
       {/* Action and Result Section */}
       <div className="space-y-4">
+         <div className="max-w-2xl mx-auto w-full space-y-4">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>
+                  <div className="flex items-center gap-2">
+                     <span>Editar Prompt</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <Textarea 
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    className="min-h-[200px] text-xs font-mono bg-card"
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+        </div>
+
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button onClick={handleGenerate} disabled={isGenerating || !avatar || garments.length === 0} size="lg" className="w-full sm:w-auto">
             {isGenerating ? (
@@ -246,23 +265,6 @@ export default function TryOnPage() {
         </div>
         
         <div className="max-w-2xl mx-auto w-full space-y-4">
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="item-1">
-                <AccordionTrigger>
-                  <div className="flex items-center gap-2">
-                     <span>Editar Prompt</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <Textarea 
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    className="min-h-[200px] text-xs font-mono bg-card"
-                  />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
             <div className="relative w-full aspect-[4/5] border rounded-lg bg-card flex items-center justify-center overflow-hidden">
                 {isGenerating ? (
                     <div className="flex flex-col items-center justify-center text-muted-foreground gap-4 w-full">
