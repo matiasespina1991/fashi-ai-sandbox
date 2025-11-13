@@ -4,8 +4,41 @@ import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Shirt, Loader2, PartyPopper, User, X, Sparkles } from 'lucide-react';
+import { Shirt, Loader2, PartyPopper, User, X, Sparkles, ChevronDown } from 'lucide-react';
 import { startImageGeneration } from '@/actions/generate-image';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Textarea } from '@/components/ui/textarea';
+
+const defaultTryOnPrompt = `CRITICAL PHOTO EDITING TASK: Apply a garment to a person while preserving their identity and the garment's details with 100% accuracy.
+
+IMAGE ROLES (MANDATORY):
+- Image 1: **THE IDENTITY**. This is the original person. Their face, hair, skin tone, and body shape are the absolute source of truth. YOU MUST NOT CHANGE THIS PERSON.
+- Image 2: **THE CANVAS**. This is the person's current state (either in a gray bodysuit or already wearing clothes). You will work on this image.
+- Subsequent Images: **THE GARMENTS**. These are the pieces of clothing to apply.
+
+ABSOLUTE RULES (FAILURE IF NOT FOLLOWED):
+1.  **PRESERVE IDENTITY:** The final output's face, hair, skin tone, and body MUST be 100% identical to Image 1 (THE IDENTITY).
+2.  **PRESERVE GARMENT DETAILS:** The texture, pattern, collar shape, and fit of THE GARMENTS must be replicated faithfully. Do NOT simplify or alter the clothing's design.
+3.  **BAREFOOT & BACKGROUND:** The person must remain barefoot. The background must be plain white.
+4.  **PERFECT CENTERING:** The person must be perfectly centered in the image, both horizontally and vertically. The full body from head to feet must be visible with equal spacing on all sides.
+5.  **COMPLETE GRAY BODYSUIT REMOVAL:** The gray bodysuit must be COMPLETELY removed and replaced. No gray fabric should remain visible anywhere.
+
+TASK:
+1.  Analyze all GARMENT images carefully. Note their exact shape, texture, and details.
+2.  Layer the GARMENTS onto THE CANVAS (Image 2) logically (e.g., shirt first, then jacket).
+3.  **CRITICAL - EXPOSED SKIN RENDERING:**
+    - Any body part NOT covered by the new garments (like arms, legs, neck) MUST be rendered as BARE SKIN.
+    - The skin tone MUST exactly match THE IDENTITY (Image 1).
+    - **NO GRAY BODYSUIT should remain visible on any exposed area.**
+4.  **CENTER THE PERSON:** Position the full-body person perfectly in the center of the frame with equal margins on all sides.
+
+COMMON MISTAKES TO AVOID (CRITICAL):
+- **DO NOT** leave ANY parts of the gray bodysuit visible.
+- **DO NOT** change the person's face, hair, or body shape from Image 1.
+- **DO NOT** "shrink-wrap" the garment texture; respect its original fit and drape.
+- **DO NOT** position the person off-center or cut off any part of their body.
+- **DO NOT** make the garments look painted on; they should look like real clothing with natural folds and shadows.
+FINAL OUTPUT: A single, full-body photorealistic image with the person perfectly centered, all garments applied realistically, and ZERO gray bodysuit visible on any exposed skin areas.`;
 
 type FilePreview = {
   file: File;
@@ -17,6 +50,7 @@ export default function TryOnPage() {
   const [garments, setGarments] =useState<FilePreview[]>([]);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [prompt, setPrompt] = useState<string>(defaultTryOnPrompt);
   const { toast } = useToast();
 
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -53,6 +87,7 @@ export default function TryOnPage() {
     setGarments([]);
     setGeneratedImage(null);
     setIsGenerating(false);
+    setPrompt(defaultTryOnPrompt);
   }
 
   const handleGenerate = async () => {
@@ -80,7 +115,7 @@ export default function TryOnPage() {
       const avatarDataUri = await fileToDataUri(avatar.file);
       const garmentDataUris = await Promise.all(garments.map(g => fileToDataUri(g.file)));
 
-      const result = await startImageGeneration({ avatarDataUri, garmentDataUris });
+      const result = await startImageGeneration({ avatarDataUri, garmentDataUris, prompt });
 
       if (result.success && result.data) {
         setGeneratedImage(result.data.generatedImageDataUri);
@@ -209,28 +244,47 @@ export default function TryOnPage() {
               </Button>
             )}
         </div>
+        
+        <div className="max-w-2xl mx-auto w-full space-y-4">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>
+                  <div className="flex items-center gap-2">
+                     <span>Editar Prompt</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <Textarea 
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    className="min-h-[200px] text-xs font-mono bg-card"
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
 
-        <div className="relative w-full aspect-[4/5] max-w-2xl mx-auto border rounded-lg bg-card flex items-center justify-center overflow-hidden">
-            {isGenerating ? (
-                <div className="flex flex-col items-center justify-center text-muted-foreground gap-4 w-full">
-                    <Loader2 className="h-10 w-10 animate-spin" />
-                    <p className="font-medium">Creando tu look...</p>
-                    <p className="text-sm text-muted-foreground">Esto puede tardar unos segundos.</p>
+            <div className="relative w-full aspect-[4/5] border rounded-lg bg-card flex items-center justify-center overflow-hidden">
+                {isGenerating ? (
+                    <div className="flex flex-col items-center justify-center text-muted-foreground gap-4 w-full">
+                        <Loader2 className="h-10 w-10 animate-spin" />
+                        <p className="font-medium">Creando tu look...</p>
+                        <p className="text-sm text-muted-foreground">Esto puede tardar unos segundos.</p>
+                    </div>
+                ) : generatedImage ? (
+                    <Image
+                        src={generatedImage}
+                        alt="Generated try-on"
+                        fill
+                        className="object-cover"
+                    />
+                ) : (
+                <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
+                    <PartyPopper className="h-16 w-16 mb-4" />
+                    <h3 className="font-headline text-xl font-semibold">3. El resultado aparecerá aquí</h3>
+                    <p className="mt-1 text-sm max-w-sm">Sube tus imágenes y haz clic en "Generar Ahora" para ver el resultado.</p>
                 </div>
-            ) : generatedImage ? (
-                <Image
-                    src={generatedImage}
-                    alt="Generated try-on"
-                    fill
-                    className="object-cover"
-                />
-            ) : (
-            <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
-                <PartyPopper className="h-16 w-16 mb-4" />
-                <h3 className="font-headline text-xl font-semibold">3. El resultado aparecerá aquí</h3>
-                <p className="mt-1 text-sm max-w-sm">Sube tus imágenes y haz clic en "Generar Ahora" para ver el resultado.</p>
+                )}
             </div>
-            )}
         </div>
       </div>
     </div>
