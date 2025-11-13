@@ -39,13 +39,7 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       bodySizeLimit: '10mb', // Increase body size limit for large data URIs
-      serverActions: {
-        bodySizeLimit: '10mb',
-      },
     },
-  },
-  serverActions: {
-    bodySizeLimit: '10mb',
   },
 };
 
