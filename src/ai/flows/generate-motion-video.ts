@@ -23,6 +23,7 @@ const GenerateMotionVideoInputSchema = z.object({
     .describe(
       "A video of a person posing or walking, used as the motion source, as a data URI that must include a MIME type and use Base64 encoding."
     ),
+   prompt: z.string().describe('The text prompt to use for the video generation.'),
 });
 export type GenerateMotionVideoInput = z.infer<typeof GenerateMotionVideoInputSchema>;
 
@@ -43,7 +44,7 @@ const generateMotionVideoFlow = ai.defineFlow(
     inputSchema: GenerateMotionVideoInputSchema,
     outputSchema: GenerateMotionVideoOutputSchema,
   },
-  async ({ avatarImageDataUri, motionVideoDataUri }) => {
+  async ({ avatarImageDataUri, motionVideoDataUri, prompt }) => {
     
     if (!process.env.GEMINI_API_KEY) {
       throw new Error("La variable de entorno GEMINI_API_KEY no está configurada. Por favor, añádela a tu entorno de despliegue.");
@@ -52,7 +53,7 @@ const generateMotionVideoFlow = ai.defineFlow(
     let { operation } = await ai.generate({
       model: googleAI.model('veo-2.0-generate-001'),
       prompt: [
-        { text: 'Animate the person from the still image to perform the actions and movements shown in the video. The final video should feature the person from the image, not the person from the video.' },
+        { text: prompt },
         { media: { url: avatarImageDataUri, contentType: 'image/jpeg' } },
         { media: { url: motionVideoDataUri, contentType: 'video/mp4' } }
       ],

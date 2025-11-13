@@ -28,6 +28,7 @@ const GenerateVideoFromFramesInputSchema = z.object({
     .describe(
       "The ending frame of the motion, as a data URI."
     ),
+   prompt: z.string().describe('The text prompt to use for the video generation.'),
 });
 export type GenerateVideoFromFramesInput = z.infer<typeof GenerateVideoFromFramesInputSchema>;
 
@@ -48,7 +49,7 @@ const generateVideoFromFramesFlow = ai.defineFlow(
     inputSchema: GenerateVideoFromFramesInputSchema,
     outputSchema: GenerateVideoFromFramesOutputSchema,
   },
-  async ({ avatarImageDataUri, firstFrameDataUri, lastFrameDataUri }) => {
+  async ({ avatarImageDataUri, firstFrameDataUri, lastFrameDataUri, prompt }) => {
     
     if (!process.env.GEMINI_API_KEY) {
       throw new Error("La variable de entorno GEMINI_API_KEY no está configurada. Por favor, añádela a tu entorno de despliegue.");
@@ -57,7 +58,7 @@ const generateVideoFromFramesFlow = ai.defineFlow(
     let { operation } = await ai.generate({
       model: googleAI.model('veo-2.0-generate-001'),
       prompt: [
-        { text: 'Animate the person from the avatar image. The animation should start with the pose from the first frame image and end with the pose from the last frame image. The final video should feature the person from the avatar image, not the people from the frame images.' },
+        { text: prompt },
         { media: { url: avatarImageDataUri, contentType: 'image/jpeg' } },
         { media: { url: firstFrameDataUri, contentType: 'image/jpeg' } },
         { media: { url: lastFrameDataUri, contentType: 'image/jpeg' } },

@@ -6,6 +6,10 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { User, Video as VideoIcon, Loader2, PartyPopper, Sparkles, X } from 'lucide-react';
 import { startVideoGeneration } from '@/actions/generate-video';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Textarea } from '@/components/ui/textarea';
+
+const defaultPrompt = 'Animate the person from the still image to perform the actions and movements shown in the video. The final video should feature the person from the image, not the person from the video.';
 
 type FilePreview = {
   file: File;
@@ -17,6 +21,7 @@ export default function VideoGeneratorFromVideoPage() {
   const [inputVideo, setInputVideo] = useState<FilePreview | null>(null);
   const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [prompt, setPrompt] = useState<string>(defaultPrompt);
   const { toast } = useToast();
 
   const modelImageInputRef = useRef<HTMLInputElement>(null);
@@ -75,7 +80,7 @@ export default function VideoGeneratorFromVideoPage() {
       const avatarImageDataUri = await fileToDataUri(modelImage.file);
       const motionVideoDataUri = await fileToDataUri(inputVideo.file);
       
-      const result = await startVideoGeneration({ avatarImageDataUri, motionVideoDataUri });
+      const result = await startVideoGeneration({ avatarImageDataUri, motionVideoDataUri, prompt });
 
       if (result.success && result.data) {
         setGeneratedVideo(result.data.generatedVideoDataUri);
@@ -103,6 +108,7 @@ export default function VideoGeneratorFromVideoPage() {
     setInputVideo(null);
     setGeneratedVideo(null);
     setIsGenerating(false);
+    setPrompt(defaultPrompt);
   }
 
   return (
@@ -191,6 +197,25 @@ export default function VideoGeneratorFromVideoPage() {
       
       {/* Action and Result Section */}
       <div className="space-y-4">
+        <div className="max-w-2xl mx-auto w-full space-y-4">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>
+                  <div className="flex items-center gap-2">
+                     <span>Editar Prompt</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <Textarea 
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    className="min-h-[150px] text-xs font-mono bg-card"
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+        </div>
+
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button onClick={handleGenerate} disabled={isGenerating || !modelImage || !inputVideo} size="lg" className="w-full sm:w-auto">
             {isGenerating ? (

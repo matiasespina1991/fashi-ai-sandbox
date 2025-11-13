@@ -6,6 +6,11 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { User, Image as ImageIcon, Loader2, PartyPopper, Sparkles, X } from 'lucide-react';
 import { startVideoFromFramesGeneration } from '@/actions/generate-video-from-frames';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Textarea } from '@/components/ui/textarea';
+
+
+const defaultPrompt = 'Animate the person from the avatar image. The animation should start with the pose from the first frame image and end with the pose from the last frame image. The final video should feature the person from the avatar image, not the people from the frame images.';
 
 type FilePreview = {
   file: File;
@@ -18,6 +23,7 @@ export default function VideoGeneratorFromFramesPage() {
   const [lastFrame, setLastFrame] = useState<FilePreview | null>(null);
   const [generatedVideo, setGeneratedVideo] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [prompt, setPrompt] = useState<string>(defaultPrompt);
   const { toast } = useToast();
 
   const modelImageInputRef = useRef<HTMLInputElement>(null);
@@ -57,6 +63,7 @@ export default function VideoGeneratorFromFramesPage() {
     setLastFrame(null);
     setGeneratedVideo(null);
     setIsGenerating(false);
+    setPrompt(defaultPrompt);
   }
 
   const handleGenerate = async () => {
@@ -79,7 +86,7 @@ export default function VideoGeneratorFromFramesPage() {
         fileToDataUri(lastFrame.file),
       ]);
       
-      const result = await startVideoFromFramesGeneration({ avatarImageDataUri, firstFrameDataUri, lastFrameDataUri });
+      const result = await startVideoFromFramesGeneration({ avatarImageDataUri, firstFrameDataUri, lastFrameDataUri, prompt });
 
       if (result.success && result.data) {
         setGeneratedVideo(result.data.generatedVideoDataUri);
@@ -175,6 +182,25 @@ export default function VideoGeneratorFromFramesPage() {
       </div>
       
       <div className="space-y-4">
+         <div className="max-w-md mx-auto w-full space-y-4">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>
+                  <div className="flex items-center gap-2">
+                     <span>Editar Prompt</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <Textarea 
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    className="min-h-[150px] text-xs font-mono bg-card"
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+        </div>
+
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button onClick={handleGenerate} disabled={isGenerating || !modelImage || !firstFrame || !lastFrame} size="lg" className="w-full sm:w-auto">
             {isGenerating ? (
