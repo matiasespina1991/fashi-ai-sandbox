@@ -20,7 +20,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem
 } from "@/components/ui/sidebar";
-import { Shirt, Video, Loader2, ChevronRight, UserRoundPlus } from "lucide-react";
+import { Shirt, Video, Loader2, ChevronRight, UserRound } from "lucide-react";
 import { UserNav } from "./user-nav";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 
@@ -92,6 +92,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
+              <Link href="/avatar-creation">
+                <SidebarMenuButton
+                  isActive={pathname === "/avatar-creation"}
+                  tooltip={{ children: "Avatar Creation" }}
+                >
+                  <UserRound className="h-5 w-5" />
+                  <span>Avatar Creation</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
               <Link href="/">
                 <SidebarMenuButton
                   isActive={pathname === "/"}
@@ -99,17 +110,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 >
                   <Shirt className="h-5 w-5" />
                   <span>Virtual Try-On</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <Link href="/avatar-creation">
-                <SidebarMenuButton
-                  isActive={pathname === "/avatar-creation"}
-                  tooltip={{ children: "Avatar Creation" }}
-                >
-                  <UserRoundPlus className="h-5 w-5" />
-                  <span>Avatar Creation</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
