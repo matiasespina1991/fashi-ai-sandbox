@@ -10,7 +10,7 @@ import { startAvatarPosesGeneration } from '@/actions/generate-avatar-poses';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogClose, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 const defaultPrompts = [
   'Full-body shot of a model in a casual, confident pose, facing the camera directly. Neutral studio background. Photorealistic.',
@@ -150,7 +150,7 @@ export default function AvatarPosesPage() {
     <div className="flex flex-1 flex-col p-4 sm:p-6 md:p-8 space-y-8">
        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             {/* Left: Avatar Upload */}
-            <div className="space-y-4">
+            <div className="space-y-4 md:w-1/2 flex-shrink-0">
                 <h3 className="text-lg font-semibold font-headline mb-1">1. Sube tu Avatar</h3>
                 <p className="text-sm text-muted-foreground">Añade la imagen base del avatar para generar las poses.</p>
                 <input
@@ -187,7 +187,7 @@ export default function AvatarPosesPage() {
             </div>
             
             {/* Right: Prompts */}
-            <div className="space-y-4">
+            <div className="space-y-4 md:w-1/2 flex-shrink-0">
                 <h3 className="text-lg font-semibold font-headline mb-1">2. Personaliza los Prompts</h3>
                 <p className="text-sm text-muted-foreground">Edita las instrucciones para cada una de las tres poses.</p>
                 <div className="flex flex-col gap-4">
@@ -252,6 +252,12 @@ export default function AvatarPosesPage() {
         {selectedImageForModal && (
           <Dialog open={!!selectedImageForModal} onOpenChange={(isOpen) => !isOpen && setSelectedImageForModal(null)}>
               <DialogContent className="w-[90vw] h-[90vh] max-w-[90vw] bg-transparent border-none shadow-none p-0 outline-none flex items-center justify-center [&>button]:text-white [&>button]:opacity-80 [&>button:hover]:opacity-100 [&>button]:h-8 [&>button]:w-8 [&>button>svg]:h-8 [&>button>svg]:w-8 [&>button]:bg-transparent">
+                  <div className="sr-only">
+                    <DialogTitle>Vista ampliada de la pose generada</DialogTitle>
+                    <DialogDescription>
+                      Una vista más grande de la pose generada. Puedes hacer zoom y desplazarte para ver los detalles.
+                    </DialogDescription>
+                  </div>
                   <ScrollArea className={`relative w-full h-full ${isZoomed ? 'overflow-auto' : 'overflow-hidden'}`}>
                     <button onClick={() => setIsZoomed(!isZoomed)} className={`relative w-full h-full outline-none flex items-center justify-center ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}>
                         <Image 
@@ -271,3 +277,4 @@ export default function AvatarPosesPage() {
   );
 }
 
+    
