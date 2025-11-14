@@ -200,7 +200,7 @@ export default function AvatarCreationPage() {
                         src={generatedImage}
                         alt="Generated avatar"
                         fill
-                        className="object-cover"
+                        className="object-contain"
                     />
                 ) : (
                 <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
