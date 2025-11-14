@@ -11,6 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { removeBackground } from "@imgly/background-removal";
+import autocrop from 'autocrop-js';
 
 const defaultAvatarPrompt = `Transform this photo into a professional full-body avatar for virtual clothing try-on.
 
@@ -139,12 +140,11 @@ export default function AvatarCreationPage() {
 
     setIsRemovingBackground(true);
     try {
-      const autocrop = (await import('autocrop-js')).default;
       const blob = await fetch(generatedImage).then((res) => res.blob());
       const noBgBlob = await removeBackground(blob);
-
       const noBgDataUrl = await blobToDataURL(noBgBlob);
-      const cropResult = await autocrop(noBgDataUrl, {});
+      
+      const cropResult = await autocrop(noBgDataUrl, { alphaThreshold: 25 });
 
       setImageWithoutBg(cropResult.dataURL);
 
