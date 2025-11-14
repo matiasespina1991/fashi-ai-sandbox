@@ -246,13 +246,12 @@ export default function AvatarCreationPage() {
                         <p className="text-sm text-muted-foreground">Esto puede tardar unos segundos.</p>
                     </div>
                 ) : displayedImage ? (
-                  <div className="w-full h-full flex items-center justify-center p-8">
+                  <div className="relative w-full h-full p-8">
                     <Image
                         src={displayedImage}
                         alt="Generated avatar"
-                        width={1024}
-                        height={1792}
-                        className="object-contain w-full h-full"
+                        fill
+                        className="object-contain"
                     />
                   </div>
                 ) : (
@@ -331,3 +330,5 @@ export default function AvatarCreationPage() {
     </div>
   );
 }
+
+    
