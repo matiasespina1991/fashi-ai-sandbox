@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -19,7 +20,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem
 } from "@/components/ui/sidebar";
-import { Shirt, Video, Loader2, ChevronRight } from "lucide-react";
+import { Shirt, Video, Loader2, ChevronRight, UserRoundPlus } from "lucide-react";
 import { UserNav } from "./user-nav";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 
@@ -43,6 +44,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     switch (pathname) {
       case "/":
         setPageTitle("Virtual Try-On");
+        break;
+      case "/avatar-creation":
+        setPageTitle("Avatar Creation");
         break;
       case "/video-generator/from-video":
         setPageTitle("Motion Video / From Video");
@@ -95,6 +99,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 >
                   <Shirt className="h-5 w-5" />
                   <span>Virtual Try-On</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <Link href="/avatar-creation">
+                <SidebarMenuButton
+                  isActive={pathname === "/avatar-creation"}
+                  tooltip={{ children: "Avatar Creation" }}
+                >
+                  <UserRoundPlus className="h-5 w-5" />
+                  <span>Avatar Creation</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
