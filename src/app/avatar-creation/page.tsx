@@ -137,20 +137,25 @@ export default function AvatarCreationPage() {
 
   const handleProcessImage = useCallback(async () => {
     if (!generatedImage) return;
-
+  
     setIsProcessing(true);
     try {
-        const noBgBlob = await removeBackground(generatedImage);
-        const noBgDataUrl = await blobToDataURL(noBgBlob);
-
-        const cropResult = await autocrop(noBgDataUrl, { alphaThreshold: 25 });
-
-        if(!cropResult) {
-            throw new Error("El recorte no devolvió ningún resultado. La imagen podría estar vacía.");
-        }
-      
-        setImageWithoutBg(cropResult.dataURL);
-
+      // Step 1: Remove the background first.
+      const noBgBlob = await removeBackground(generatedImage);
+      const noBgDataUrl = await blobToDataURL(noBgBlob);
+  
+      // Step 2: Autocrop the result (which now has a transparent background).
+      // We use alphaThreshold to tell autocrop to trim based on transparency,
+      // not a specific corner color. A value of 25 is tolerant enough for
+      // anti-aliased edges.
+      const cropResult = await autocrop(noBgDataUrl, { alphaThreshold: 25 });
+  
+      if (!cropResult) {
+        throw new Error("El recorte no devolvió ningún resultado. La imagen podría estar vacía.");
+      }
+  
+      setImageWithoutBg(cropResult.dataURL);
+  
       toast({
         title: "Fondo Eliminado y Recortado",
         description: "El fondo de tu avatar ha sido eliminado y recortado con éxito.",
@@ -246,12 +251,12 @@ export default function AvatarCreationPage() {
                         <p className="text-sm text-muted-foreground">Esto puede tardar unos segundos.</p>
                     </div>
                 ) : displayedImage ? (
-                  <div className="relative w-full h-full p-8">
+                  <div className="relative w-full h-full">
                     <Image
                         src={displayedImage}
                         alt="Generated avatar"
                         fill
-                        className="object-contain"
+                        className="object-contain pt-6"
                     />
                   </div>
                 ) : (
@@ -330,5 +335,3 @@ export default function AvatarCreationPage() {
     </div>
   );
 }
-
-    
