@@ -130,52 +130,49 @@ export default function AvatarPosesPage() {
   );
 
   return (
-    <div className="flex-1 p-4 sm:p-6 md:p-8 flex flex-col space-y-6">
-       <div> {/* Wrapper for top section and buttons */}
-            <div className="flex flex-col md:flex-row gap-8 items-start">
-                {/* Left: Avatar Upload */}
-                <div className="w-full md:w-1/2 space-y-6">
-                <div>
-                    <h3 className="text-lg font-semibold font-headline mb-1">1. Sube tu Avatar</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Añade la imagen base del avatar para generar las poses.</p>
-                    <input
-                    type="file"
-                    accept="image/*"
-                    ref={avatarInputRef}
-                    onChange={handleAvatarChange}
-                    className="hidden"
+    <div className="flex-1 p-4 sm:p-6 md:p-8 flex flex-col space-y-8">
+       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            {/* Left: Avatar Upload */}
+            <div className="space-y-4">
+                <h3 className="text-lg font-semibold font-headline mb-1">1. Sube tu Avatar</h3>
+                <p className="text-sm text-muted-foreground">Añade la imagen base del avatar para generar las poses.</p>
+                <input
+                type="file"
+                accept="image/*"
+                ref={avatarInputRef}
+                onChange={handleAvatarChange}
+                className="hidden"
+                />
+                <div className="aspect-[4/5] w-full">
+                {avatar ? (
+                    <div className="relative w-full h-full">
+                    <Image
+                        src={avatar.previewUrl}
+                        alt="Avatar preview"
+                        fill
+                        className="object-contain bg-white rounded-lg"
                     />
-                    <div className="aspect-[4/5] w-full">
-                    {avatar ? (
-                        <div className="relative w-full h-full">
-                        <Image
-                            src={avatar.previewUrl}
-                            alt="Avatar preview"
-                            fill
-                            className="object-contain bg-white rounded-lg"
-                        />
-                        <button onClick={(e) => { e.stopPropagation(); setAvatar(null); }} className="absolute top-2 right-2 bg-destructive/80 hover:bg-destructive text-destructive-foreground rounded-full p-1.5 z-10">
-                            <X size={16}/>
-                        </button>
-                        </div>
-                    ) : (
-                        <button
-                        onClick={() => avatarInputRef.current?.click()}
-                        className="flex flex-col items-center justify-center w-full h-full border-2 border-dashed rounded-lg hover:bg-muted transition-colors"
-                        aria-label="Subir avatar"
-                        >
-                        <User className="h-12 w-12 text-muted-foreground" />
-                        <span className="mt-2 text-sm font-medium">Haz clic para subir</span>
-                        </button>
-                    )}
+                    <button onClick={(e) => { e.stopPropagation(); setAvatar(null); }} className="absolute top-2 right-2 bg-destructive/80 hover:bg-destructive text-destructive-foreground rounded-full p-1.5 z-10">
+                        <X size={16}/>
+                    </button>
                     </div>
+                ) : (
+                    <button
+                    onClick={() => avatarInputRef.current?.click()}
+                    className="flex flex-col items-center justify-center w-full h-full border-2 border-dashed rounded-lg hover:bg-muted transition-colors"
+                    aria-label="Subir avatar"
+                    >
+                    <User className="h-12 w-12 text-muted-foreground" />
+                    <span className="mt-2 text-sm font-medium">Haz clic para subir</span>
+                    </button>
+                )}
                 </div>
-                </div>
-                
-                {/* Right: Prompts */}
-                <div className="w-full md:w-1/2 space-y-6">
+            </div>
+            
+            {/* Right: Prompts */}
+            <div className="space-y-4">
                 <h3 className="text-lg font-semibold font-headline mb-1">2. Personaliza los Prompts</h3>
-                <p className="text-sm text-muted-foreground mb-4">Edita las instrucciones para cada una de las tres poses.</p>
+                <p className="text-sm text-muted-foreground">Edita las instrucciones para cada una de las tres poses.</p>
                 <div className="flex flex-col gap-4">
                     {prompts.map((prompt, index) => (
                         <div key={index} className="space-y-2">
@@ -190,35 +187,34 @@ export default function AvatarPosesPage() {
                         </div>
                     ))}
                 </div>
-                </div>
             </div>
-        
-            {/* Action Buttons Section */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-                    <Button onClick={handleGenerate} disabled={isGenerating || !avatar} size="lg" className="w-full sm:w-auto">
-                    {isGenerating ? (
-                        <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Generando Poses...
-                        </>
-                    ) : (
-                        <>
-                        <Sparkles className="mr-2 h-5 w-5" />
-                        Generar Poses
-                        </>
-                    )}
-                    </Button>
-                    {avatar && (
-                    <Button onClick={resetState} variant="outline" size="lg" className="w-full sm:w-auto">
-                        <X className="mr-2 h-5 w-5" />
-                        Limpiar
-                    </Button>
-                    )}
-                </div>
         </div>
+    
+        {/* Action Buttons Section */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button onClick={handleGenerate} disabled={isGenerating || !avatar} size="lg" className="w-full sm:w-auto">
+                {isGenerating ? (
+                    <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Generando Poses...
+                    </>
+                ) : (
+                    <>
+                    <Sparkles className="mr-2 h-5 w-5" />
+                    Generar Poses
+                    </>
+                )}
+                </Button>
+                {avatar && (
+                <Button onClick={resetState} variant="outline" size="lg" className="w-full sm:w-auto">
+                    <X className="mr-2 h-5 w-5" />
+                    Limpiar
+                </Button>
+                )}
+            </div>
 
-      {/* Bottom: Results Section */}
-       <div className="flex-1 flex flex-col min-h-0">
+        {/* Bottom: Results Section */}
+       <div className="flex flex-col">
             <h3 className="text-lg font-semibold font-headline mb-1 text-center">3. Poses Generadas</h3>
             <p className="text-sm text-muted-foreground mb-4 text-center">Los resultados aparecerán aquí. Desliza si es necesario.</p>
             <ScrollArea className="w-full whitespace-nowrap rounded-md">
@@ -247,3 +243,5 @@ export default function AvatarPosesPage() {
     </div>
   );
 }
+
+    
