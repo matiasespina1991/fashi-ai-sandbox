@@ -20,7 +20,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem
 } from "@/components/ui/sidebar";
-import { Shirt, Video, Loader2, ChevronRight, UserRound } from "lucide-react";
+import { Shirt, Video, Loader2, ChevronRight, UserRound, GalleryHorizontal } from "lucide-react";
 import { UserNav } from "./user-nav";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 
@@ -47,6 +47,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         break;
       case "/avatar-creation":
         setPageTitle("Avatar Creation");
+        break;
+      case "/avatar-poses":
+        setPageTitle("Avatar Poses");
         break;
       case "/video-generator/from-video":
         setPageTitle("Motion Video / From Video");
@@ -110,6 +113,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 >
                   <Shirt className="h-5 w-5" />
                   <span>Virtual Try-On</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <Link href="/avatar-poses">
+                <SidebarMenuButton
+                  isActive={pathname === "/avatar-poses"}
+                  tooltip={{ children: "Avatar Poses" }}
+                >
+                  <GalleryHorizontal className="h-5 w-5" />
+                  <span>Avatar Poses</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
