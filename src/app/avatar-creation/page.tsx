@@ -62,7 +62,7 @@ export default function AvatarCreationPage() {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [imageWithoutBg, setImageWithoutBg] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isRemovingBackground, setIsRemovingBackground] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [prompt, setPrompt] = useState<string>(defaultAvatarPrompt);
   const { toast } = useToast();
 
@@ -92,7 +92,7 @@ export default function AvatarCreationPage() {
     setGeneratedImage(null);
     setImageWithoutBg(null);
     setIsGenerating(false);
-    setIsRemovingBackground(false);
+    setIsProcessing(false);
     setPrompt(defaultAvatarPrompt);
   }
 
@@ -135,13 +135,12 @@ export default function AvatarCreationPage() {
     }
   };
 
-  const handleRemoveBackground = useCallback(async () => {
+  const handleProcessImage = useCallback(async () => {
     if (!generatedImage) return;
 
-    setIsRemovingBackground(true);
+    setIsProcessing(true);
     try {
-      const blob = await fetch(generatedImage).then((res) => res.blob());
-      const noBgBlob = await removeBackground(blob);
+      const noBgBlob = await removeBackground(generatedImage);
       const noBgDataUrl = await blobToDataURL(noBgBlob);
       
       const cropResult = await autocrop(noBgDataUrl, { alphaThreshold: 25 });
@@ -160,7 +159,7 @@ export default function AvatarCreationPage() {
           error.message || "No se pudo quitar el fondo o recortar. Inténtalo de nuevo.",
       });
     } finally {
-      setIsRemovingBackground(false);
+      setIsProcessing(false);
     }
   }, [generatedImage, toast]);
 
@@ -234,9 +233,9 @@ export default function AvatarCreationPage() {
         {/* Result Section */}
         <div className="space-y-4">
             <h3 className="text-lg font-semibold font-headline mb-1">2. Tu Avatar Generado</h3>
-            <p className="text-sm text-muted-foreground mb-4">El resultado aparecerá aquí.</p>
-            <div className="relative w-full aspect-[4/5] border rounded-lg bg-card flex items-center justify-center overflow-hidden">
-                {isGenerating || isRemovingBackground ? (
+            <p className="text-sm text-muted-foreground mb-4">El resultado aparecerá aquí. Una vez generado, puedes quitar el fondo y recortarlo.</p>
+            <div className="relative w-full aspect-[4/5] border rounded-lg bg-card grid place-items-center overflow-hidden">
+                {isGenerating || isProcessing ? (
                     <div className="flex flex-col items-center justify-center text-muted-foreground gap-4 w-full">
                         <Loader2 className="h-10 w-10 animate-spin" />
                         <p className="font-medium">{isGenerating ? 'Creando tu avatar...' : 'Quitando fondo y recortando...'}</p>
@@ -259,10 +258,10 @@ export default function AvatarCreationPage() {
              {generatedImage && (
               <div className="flex justify-start">
                   <Button
-                      onClick={handleRemoveBackground}
-                      disabled={isRemovingBackground || !!imageWithoutBg}
+                      onClick={handleProcessImage}
+                      disabled={isProcessing || !!imageWithoutBg}
                   >
-                      {isRemovingBackground ? (
+                      {isProcessing ? (
                           <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                               Procesando...
@@ -314,7 +313,7 @@ export default function AvatarCreationPage() {
                 </>
             )}
             </Button>
-            {(userImages.length > 0) && (
+            {(userImages.length > 0 || generatedImage) && (
               <Button onClick={resetState} variant="outline" size="lg" className="w-full sm:w-auto">
                 <X className="mr-2 h-5 w-5" />
                 Limpiar
