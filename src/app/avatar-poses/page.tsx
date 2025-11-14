@@ -5,12 +5,12 @@ import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { User, Loader2, Sparkles, X, Image as ImageIcon } from 'lucide-react';
+import { User, Loader2, Sparkles, X, Image as ImageIcon, ZoomIn, ZoomOut } from 'lucide-react';
 import { startAvatarPosesGeneration } from '@/actions/generate-avatar-poses';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
 
 const defaultPrompts = [
   'Full-body shot of a model in a casual, confident pose, facing the camera directly. Neutral studio background. Photorealistic.',
@@ -30,6 +30,7 @@ export default function AvatarPosesPage() {
   const [prompts, setPrompts] = useState<string[]>(defaultPrompts);
   const { toast } = useToast();
   const [selectedImageForModal, setSelectedImageForModal] = useState<string | null>(null);
+  const [isZoomed, setIsZoomed] = useState(false);
 
 
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -108,13 +109,18 @@ export default function AvatarPosesPage() {
       setIsGenerating(false);
     }
   };
+  
+  const openModal = (imageUrl: string) => {
+    setSelectedImageForModal(imageUrl);
+    setIsZoomed(false); // Reset zoom state when opening a new image
+  };
 
   const PoseResult = ({ image, isLoading, index }: { image: string | null, isLoading: boolean, index: number }) => (
     <div className="flex flex-col gap-2 shrink-0">
         <p className="text-sm font-semibold text-left text-foreground">{`Pose ${index + 1}`}</p>
         <div 
           className="relative w-80 aspect-[4/5] border rounded-lg bg-card grid place-items-center overflow-hidden"
-          onClick={() => image && setSelectedImageForModal(image)}
+          onClick={() => image && openModal(image)}
         >
             {isLoading ? (
                 <div className="flex flex-col items-center justify-center text-muted-foreground gap-2 text-center">
@@ -245,18 +251,24 @@ export default function AvatarPosesPage() {
 
         {selectedImageForModal && (
           <Dialog open={!!selectedImageForModal} onOpenChange={(isOpen) => !isOpen && setSelectedImageForModal(null)}>
-              <DialogContent className="w-[90vw] h-[90vh] max-w-[90vw] bg-transparent border-none shadow-none p-0">
-                  <div className="relative w-full h-full">
+              <DialogContent className="w-[90vw] h-[90vh] max-w-[90vw] bg-transparent border-none shadow-none p-0 outline-none">
+                  <button onClick={() => setIsZoomed(!isZoomed)} className={`relative w-full h-full outline-none ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}>
                       <Image 
                           src={selectedImageForModal} 
                           alt="Generated pose enlarged" 
                           fill 
-                          className="object-contain"
+                          className={isZoomed ? 'object-cover' : 'object-contain'}
                       />
-                  </div>
+                  </button>
+                  <DialogClose className="absolute right-4 top-4 rounded-full p-1 bg-black/50 text-white opacity-80 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground z-50">
+                    <X className="h-8 w-8" />
+                    <span className="sr-only">Close</span>
+                  </DialogClose>
               </DialogContent>
           </Dialog>
         )}
     </div>
   );
 }
+
+    
