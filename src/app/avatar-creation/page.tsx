@@ -145,9 +145,6 @@ export default function AvatarCreationPage() {
       const noBgDataUrl = await blobToDataURL(noBgBlob);
   
       // Step 2: Autocrop the result (which now has a transparent background).
-      // We use alphaThreshold to tell autocrop to trim based on transparency,
-      // not a specific corner color. A value of 25 is tolerant enough for
-      // anti-aliased edges.
       const cropResult = await autocrop(noBgDataUrl, { alphaThreshold: 25 });
   
       if (!cropResult) {
@@ -256,7 +253,7 @@ export default function AvatarCreationPage() {
                         src={displayedImage}
                         alt="Generated avatar"
                         fill
-                        className="object-contain pt-6"
+                        className="object-contain py-4"
                     />
                   </div>
                 ) : (
