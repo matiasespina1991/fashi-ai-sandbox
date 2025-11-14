@@ -6,3 +6,4 @@ import '@/ai/flows/generate-motion-video.ts';
 import '@/ai/flows/generate-video-from-frames.ts';
 import '@/ai/flows/generate-avatar.ts';
 import '@/ai/flows/generate-avatar-poses.ts';
+import '@/ai/flows/generate-scene-prompt.ts';

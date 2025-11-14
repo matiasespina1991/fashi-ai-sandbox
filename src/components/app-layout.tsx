@@ -20,7 +20,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem
 } from "@/components/ui/sidebar";
-import { Shirt, Video, Loader2, ChevronRight, UserRound, GalleryHorizontal } from "lucide-react";
+import { Shirt, Video, Loader2, ChevronRight, UserRound, GalleryHorizontal, Camera } from "lucide-react";
 import { UserNav } from "./user-nav";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 
@@ -56,6 +56,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         break;
       case "/video-generator/from-frames":
         setPageTitle("Motion Video / From Frames");
+        break;
+      case "/scene-to-prompt":
+        setPageTitle("Scene to Prompt Tool");
         break;
       default:
         setPageTitle("Fashi Sandbox");
@@ -161,6 +164,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     </SidebarMenuSub>
                 </CollapsibleContent>
                </Collapsible>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <Link href="/scene-to-prompt">
+                <SidebarMenuButton
+                  isActive={pathname === "/scene-to-prompt"}
+                  tooltip={{ children: "Scene to Prompt" }}
+                >
+                  <Camera className="h-5 w-5" />
+                  <span>Scene to Prompt</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
