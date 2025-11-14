@@ -145,6 +145,10 @@ export default function AvatarCreationPage() {
       
       const cropResult = await autocrop(noBgDataUrl, { alphaThreshold: 25 });
 
+      if(!cropResult) {
+        throw new Error("El recorte no devolvió ningún resultado. La imagen podría estar vacía.");
+      }
+
       setImageWithoutBg(cropResult.dataURL);
 
       toast({
@@ -242,12 +246,14 @@ export default function AvatarCreationPage() {
                         <p className="text-sm text-muted-foreground">Esto puede tardar unos segundos.</p>
                     </div>
                 ) : displayedImage ? (
+                  <div className="relative w-full h-full p-8">
                     <Image
                         src={displayedImage}
                         alt="Generated avatar"
                         fill
                         className="object-contain"
                     />
+                  </div>
                 ) : (
                 <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
                     <PartyPopper className="h-16 w-16 mb-4" />
