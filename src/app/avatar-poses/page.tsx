@@ -10,11 +10,12 @@ import { startAvatarPosesGeneration } from '@/actions/generate-avatar-poses';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 const defaultPrompts = [
   'Full-body shot of a model in a casual, confident pose, facing the camera directly. Neutral studio background. Photorealistic.',
   'Full-body shot of a model in a casual pose, turned three-quarters to the left (diagonal view). Neutral studio background. Photorealistic.',
-  'Full-body shot of a model in a casual pose, in full profile facing left. Neutral studio background. Photorealistic.',
+  'Full-body shot of a model in a full profile facing left. Neutral studio background. Photorealistic.',
 ];
 
 type FilePreview = {
@@ -28,6 +29,8 @@ export default function AvatarPosesPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [prompts, setPrompts] = useState<string[]>(defaultPrompts);
   const { toast } = useToast();
+  const [selectedImageForModal, setSelectedImageForModal] = useState<string | null>(null);
+
 
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
@@ -109,19 +112,24 @@ export default function AvatarPosesPage() {
   const PoseResult = ({ image, isLoading, index }: { image: string | null, isLoading: boolean, index: number }) => (
     <div className="flex flex-col gap-2 shrink-0">
         <p className="text-sm font-semibold text-left text-foreground">{`Pose ${index + 1}`}</p>
-        <div className="relative w-80 aspect-[4/5] border rounded-lg bg-card grid place-items-center overflow-hidden">
+        <div 
+          className="relative w-80 aspect-[4/5] border rounded-lg bg-card grid place-items-center overflow-hidden"
+          onClick={() => image && setSelectedImageForModal(image)}
+        >
             {isLoading ? (
                 <div className="flex flex-col items-center justify-center text-muted-foreground gap-2 text-center">
                     <Loader2 className="h-8 w-8 animate-spin" />
                     <p className="font-medium text-sm">Generando...</p>
                 </div>
             ) : image ? (
+              <button className="w-full h-full relative hover:opacity-80 transition-opacity">
                 <Image
                     src={image}
                     alt={`Generated pose ${index + 1}`}
                     fill
                     className="object-contain"
                 />
+              </button>
             ) : (
                 <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-4">
                     <ImageIcon className="h-12 w-12 mb-2" />
@@ -217,7 +225,7 @@ export default function AvatarPosesPage() {
             </div>
 
         {/* Bottom: Results Section */}
-       <div className="flex flex-col">
+       <div className="flex flex-col flex-1 min-h-0">
             <h3 className="text-lg font-semibold font-headline mb-1 text-center">3. Poses Generadas</h3>
             <p className="text-sm text-muted-foreground mb-4 text-center">Los resultados aparecerán aquí. Desliza si es necesario.</p>
             <ScrollArea className="w-full whitespace-nowrap rounded-md">
@@ -234,6 +242,21 @@ export default function AvatarPosesPage() {
                 <ScrollBar orientation="horizontal" />
             </ScrollArea>
         </div>
+
+        {selectedImageForModal && (
+          <Dialog open={!!selectedImageForModal} onOpenChange={(isOpen) => !isOpen && setSelectedImageForModal(null)}>
+              <DialogContent className="max-w-4xl h-5/6">
+                  <div className="relative w-full h-full">
+                      <Image 
+                          src={selectedImageForModal} 
+                          alt="Generated pose enlarged" 
+                          fill 
+                          className="object-contain py-4"
+                      />
+                  </div>
+              </DialogContent>
+          </Dialog>
+        )}
     </div>
   );
 }
