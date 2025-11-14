@@ -132,9 +132,9 @@ export default function AvatarPosesPage() {
   return (
     <div className="flex-1 p-4 sm:p-6 md:p-8 flex flex-col space-y-6">
        <div> {/* Wrapper for top section and buttons */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <div className="flex flex-col md:flex-row gap-8 items-start">
                 {/* Left: Avatar Upload */}
-                <div className="space-y-6">
+                <div className="w-full md:w-1/2 space-y-6">
                 <div>
                     <h3 className="text-lg font-semibold font-headline mb-1">1. Sube tu Avatar</h3>
                     <p className="text-sm text-muted-foreground mb-4">Añade la imagen base del avatar para generar las poses.</p>
@@ -173,7 +173,7 @@ export default function AvatarPosesPage() {
                 </div>
                 
                 {/* Right: Prompts */}
-                <div className="space-y-6">
+                <div className="w-full md:w-1/2 space-y-6">
                 <h3 className="text-lg font-semibold font-headline mb-1">2. Personaliza los Prompts</h3>
                 <p className="text-sm text-muted-foreground mb-4">Edita las instrucciones para cada una de las tres poses.</p>
                 <div className="flex flex-col gap-4">
@@ -222,7 +222,7 @@ export default function AvatarPosesPage() {
             <h3 className="text-lg font-semibold font-headline mb-1 text-center">3. Poses Generadas</h3>
             <p className="text-sm text-muted-foreground mb-4 text-center">Los resultados aparecerán aquí. Desliza si es necesario.</p>
             <ScrollArea className="w-full whitespace-nowrap rounded-md">
-                <div className="flex w-max space-x-6 p-4">
+                <div className="flex w-max space-x-6 p-4 mx-auto">
                    {generatedImages.map((image, index) => (
                         <PoseResult 
                             key={index}
