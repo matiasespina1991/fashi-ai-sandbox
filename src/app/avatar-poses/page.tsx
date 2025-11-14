@@ -8,6 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 import { User, Loader2, PartyPopper, Sparkles, X, Image as ImageIcon } from 'lucide-react';
 import { startAvatarPosesGeneration } from '@/actions/generate-avatar-poses';
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 const defaultPrompts = [
   'Full-body shot of a model in a casual, confident pose, facing the camera directly. Neutral studio background. Photorealistic.',
@@ -104,42 +106,35 @@ export default function AvatarPosesPage() {
     }
   };
 
-  const PoseResult = ({ image, prompt, onPromptChange, isLoading }: { image: string | null, prompt: string, onPromptChange: (value: string) => void, isLoading: boolean }) => (
-    <div className="space-y-4">
-        <div className="relative w-full aspect-[4/5] border rounded-lg bg-card grid place-items-center overflow-hidden">
-            {isLoading ? (
-                 <div className="flex flex-col items-center justify-center text-muted-foreground gap-2 text-center">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                    <p className="font-medium text-sm">Generando...</p>
-                </div>
-            ) : image ? (
-                <Image
-                    src={image}
-                    alt="Generated pose"
-                    fill
-                    className="object-contain"
-                />
-            ) : (
-                <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-4">
-                    <ImageIcon className="h-12 w-12 mb-2" />
-                    <p className="text-sm font-medium">El resultado aparecerá aquí</p>
-                </div>
-            )}
-        </div>
-        <Textarea 
-            value={prompt}
-            onChange={(e) => onPromptChange(e.target.value)}
-            className="min-h-[100px] text-xs font-mono bg-card"
-            disabled={isLoading}
-        />
+  const PoseResult = ({ image, isLoading }: { image: string | null, isLoading: boolean }) => (
+    <div className="relative w-80 aspect-[4/5] border rounded-lg bg-card grid place-items-center overflow-hidden shrink-0">
+        {isLoading ? (
+             <div className="flex flex-col items-center justify-center text-muted-foreground gap-2 text-center">
+                <Loader2 className="h-8 w-8 animate-spin" />
+                <p className="font-medium text-sm">Generando...</p>
+            </div>
+        ) : image ? (
+            <Image
+                src={image}
+                alt="Generated pose"
+                fill
+                className="object-contain"
+            />
+        ) : (
+            <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-4">
+                <ImageIcon className="h-12 w-12 mb-2" />
+                <p className="text-sm font-medium">El resultado aparecerá aquí</p>
+            </div>
+        )}
     </div>
   );
 
   return (
-    <div className="flex-1 p-4 sm:p-6 md:p-8 space-y-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Upload Section */}
-        <div className="lg:col-span-1 space-y-6">
+    <div className="flex-1 p-4 sm:p-6 md:p-8 flex flex-col space-y-8">
+      {/* Top Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        {/* Left: Avatar Upload */}
+        <div className="space-y-6">
           <div>
             <h3 className="text-lg font-semibold font-headline mb-1">1. Sube tu Avatar</h3>
             <p className="text-sm text-muted-foreground mb-4">Añade la imagen base del avatar para generar las poses.</p>
@@ -176,31 +171,30 @@ export default function AvatarPosesPage() {
             </div>
           </div>
         </div>
-
-        {/* Results Section */}
-        <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-baseline justify-between">
-                <div>
-                     <h3 className="text-lg font-semibold font-headline mb-1">2. Poses Generadas</h3>
-                     <p className="text-sm text-muted-foreground">Personaliza los prompts y genera tres nuevas poses para tu avatar.</p>
-                </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {generatedImages.map((image, index) => (
-                    <PoseResult 
-                        key={index}
-                        image={image}
-                        prompt={prompts[index]}
-                        onPromptChange={(value) => handlePromptChange(index, value)}
-                        isLoading={isGenerating}
+        
+        {/* Right: Prompts */}
+        <div className="space-y-6">
+           <h3 className="text-lg font-semibold font-headline mb-1">2. Personaliza los Prompts</h3>
+           <p className="text-sm text-muted-foreground mb-4">Edita las instrucciones para cada una de las tres poses.</p>
+           <div className="flex flex-col gap-4">
+              {prompts.map((prompt, index) => (
+                <div key={index} className="space-y-2">
+                    <Label htmlFor={`prompt-${index}`} className="font-semibold">{`Prompt de Imagen ${index + 1}`}</Label>
+                    <Textarea 
+                        id={`prompt-${index}`}
+                        value={prompt}
+                        onChange={(e) => handlePromptChange(index, e.target.value)}
+                        className="min-h-[100px] text-xs font-mono bg-card"
+                        disabled={isGenerating}
                     />
-                ))}
-            </div>
+                </div>
+              ))}
+           </div>
         </div>
       </div>
       
-      {/* Action Section */}
-       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+      {/* Action Buttons Section */}
+       <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button onClick={handleGenerate} disabled={isGenerating || !avatar} size="lg" className="w-full sm:w-auto">
             {isGenerating ? (
                 <>
@@ -222,6 +216,24 @@ export default function AvatarPosesPage() {
             )}
         </div>
 
+      {/* Bottom: Results Section */}
+       <div>
+            <h3 className="text-lg font-semibold font-headline mb-1 text-center">3. Poses Generadas</h3>
+            <p className="text-sm text-muted-foreground mb-4 text-center">Los resultados aparecerán aquí. Desliza si es necesario.</p>
+            <ScrollArea className="w-full whitespace-nowrap rounded-md">
+                <div className="flex w-max space-x-6 pb-4">
+                   {generatedImages.map((image, index) => (
+                        <PoseResult 
+                            key={index}
+                            image={image}
+                            isLoading={isGenerating}
+                        />
+                    ))}
+                </div>
+                <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+        </div>
+
         {isGenerating && !generatedImages.some(img => img) && (
              <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
                 <div className="flex flex-col items-center justify-center text-foreground gap-4 w-full">
@@ -234,3 +246,5 @@ export default function AvatarPosesPage() {
     </div>
   );
 }
+
+    
