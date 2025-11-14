@@ -108,7 +108,7 @@ export default function AvatarPosesPage() {
 
   const PoseResult = ({ image, isLoading, index }: { image: string | null, isLoading: boolean, index: number }) => (
     <div className="flex flex-col gap-2 shrink-0">
-        <p className="text-sm font-semibold text-center text-muted-foreground">{`Pose ${index + 1}`}</p>
+        <p className="text-sm font-semibold text-left text-foreground">{`Pose ${index + 1}`}</p>
         <div className="relative w-80 aspect-[4/5] border rounded-lg bg-card grid place-items-center overflow-hidden">
             {isLoading ? (
                 <div className="flex flex-col items-center justify-center text-muted-foreground gap-2 text-center">
