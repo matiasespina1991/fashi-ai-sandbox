@@ -218,7 +218,7 @@ export default function AvatarPosesPage() {
             <h3 className="text-lg font-semibold font-headline mb-1 text-center">3. Poses Generadas</h3>
             <p className="text-sm text-muted-foreground mb-4 text-center">Los resultados aparecerán aquí. Desliza si es necesario.</p>
             <ScrollArea className="w-full whitespace-nowrap rounded-md">
-                <div className="flex w-max space-x-6 p-4 mx-auto">
+                <div className="flex w-max space-x-6 p-4">
                    {generatedImages.map((image, index) => (
                         <PoseResult 
                             key={index}
@@ -243,5 +243,3 @@ export default function AvatarPosesPage() {
     </div>
   );
 }
-
-    
