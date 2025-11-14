@@ -47,6 +47,15 @@ type FilePreview = {
   previewUrl: string;
 };
 
+const blobToDataURL = (blob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+};
+
 export default function AvatarCreationPage() {
   const [userImages, setUserImages] = useState<FilePreview[]>([]);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -130,20 +139,25 @@ export default function AvatarCreationPage() {
 
     setIsRemovingBackground(true);
     try {
+      const autocrop = (await import('autocrop-js')).default;
       const blob = await fetch(generatedImage).then((res) => res.blob());
-      const resultBlob = await removeBackground(blob);
-      const resultUrl = URL.createObjectURL(resultBlob);
-      setImageWithoutBg(resultUrl);
+      const noBgBlob = await removeBackground(blob);
+
+      const noBgDataUrl = await blobToDataURL(noBgBlob);
+      const cropResult = await autocrop(noBgDataUrl, {});
+
+      setImageWithoutBg(cropResult.dataURL);
+
       toast({
-        title: "Fondo Eliminado",
-        description: "El fondo de tu avatar ha sido eliminado con éxito.",
+        title: "Fondo Eliminado y Recortado",
+        description: "El fondo de tu avatar ha sido eliminado y recortado con éxito.",
       });
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error al Quitar Fondo",
+        title: "Error en el Procesamiento",
         description:
-          error.message || "No se pudo eliminar el fondo. Inténtalo de nuevo.",
+          error.message || "No se pudo quitar el fondo o recortar. Inténtalo de nuevo.",
       });
     } finally {
       setIsRemovingBackground(false);
@@ -225,7 +239,7 @@ export default function AvatarCreationPage() {
                 {isGenerating || isRemovingBackground ? (
                     <div className="flex flex-col items-center justify-center text-muted-foreground gap-4 w-full">
                         <Loader2 className="h-10 w-10 animate-spin" />
-                        <p className="font-medium">{isGenerating ? 'Creando tu avatar...' : 'Quitando fondo...'}</p>
+                        <p className="font-medium">{isGenerating ? 'Creando tu avatar...' : 'Quitando fondo y recortando...'}</p>
                         <p className="text-sm text-muted-foreground">Esto puede tardar unos segundos.</p>
                     </div>
                 ) : displayedImage ? (
@@ -251,12 +265,12 @@ export default function AvatarCreationPage() {
                       {isRemovingBackground ? (
                           <>
                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Quitando fondo...
+                              Procesando...
                           </>
                       ) : (
                           <>
                               <Wand2 className="mr-2 h-4 w-4" />
-                              Quitar fondo
+                              Quitar fondo y recortar
                           </>
                       )}
                   </Button>
@@ -311,5 +325,3 @@ export default function AvatarCreationPage() {
     </div>
   );
 }
-
-    
