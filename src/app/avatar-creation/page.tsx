@@ -140,16 +140,16 @@ export default function AvatarCreationPage() {
 
     setIsProcessing(true);
     try {
-      const noBgBlob = await removeBackground(generatedImage);
-      const noBgDataUrl = await blobToDataURL(noBgBlob);
+        const noBgBlob = await removeBackground(generatedImage);
+        const noBgDataUrl = await blobToDataURL(noBgBlob);
+
+        const cropResult = await autocrop(noBgDataUrl, { alphaThreshold: 25 });
+
+        if(!cropResult) {
+            throw new Error("El recorte no devolvió ningún resultado. La imagen podría estar vacía.");
+        }
       
-      const cropResult = await autocrop(noBgDataUrl, { alphaThreshold: 25 });
-
-      if(!cropResult) {
-        throw new Error("El recorte no devolvió ningún resultado. La imagen podría estar vacía.");
-      }
-
-      setImageWithoutBg(cropResult.dataURL);
+        setImageWithoutBg(cropResult.dataURL);
 
       toast({
         title: "Fondo Eliminado y Recortado",
@@ -246,12 +246,13 @@ export default function AvatarCreationPage() {
                         <p className="text-sm text-muted-foreground">Esto puede tardar unos segundos.</p>
                     </div>
                 ) : displayedImage ? (
-                  <div className="relative w-full h-full p-8">
+                  <div className="w-full h-full flex items-center justify-center p-8">
                     <Image
                         src={displayedImage}
                         alt="Generated avatar"
-                        fill
-                        className="object-contain"
+                        width={1024}
+                        height={1792}
+                        className="object-contain w-full h-full"
                     />
                   </div>
                 ) : (
