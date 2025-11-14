@@ -10,7 +10,7 @@ import { startAvatarGeneration } from '@/actions/generate-avatar';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import removeBackground from "@imgly/background-removal";
+import { removeBackground } from "@imgly/background-removal";
 
 const defaultAvatarPrompt = `Transform this photo into a professional full-body avatar for virtual clothing try-on.
 
@@ -311,3 +311,5 @@ export default function AvatarCreationPage() {
     </div>
   );
 }
+
+    
