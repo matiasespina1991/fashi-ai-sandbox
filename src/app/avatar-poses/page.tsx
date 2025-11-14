@@ -106,31 +106,34 @@ export default function AvatarPosesPage() {
     }
   };
 
-  const PoseResult = ({ image, isLoading }: { image: string | null, isLoading: boolean }) => (
-    <div className="relative w-80 aspect-[4/5] border rounded-lg bg-card grid place-items-center overflow-hidden shrink-0">
-        {isLoading ? (
-             <div className="flex flex-col items-center justify-center text-muted-foreground gap-2 text-center">
-                <Loader2 className="h-8 w-8 animate-spin" />
-                <p className="font-medium text-sm">Generando...</p>
-            </div>
-        ) : image ? (
-            <Image
-                src={image}
-                alt="Generated pose"
-                fill
-                className="object-contain"
-            />
-        ) : (
-            <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-4">
-                <ImageIcon className="h-12 w-12 mb-2" />
-                <p className="text-sm font-medium">El resultado aparecerá aquí</p>
-            </div>
-        )}
+  const PoseResult = ({ image, isLoading, index }: { image: string | null, isLoading: boolean, index: number }) => (
+    <div className="flex flex-col gap-2 shrink-0">
+        <p className="text-sm font-semibold text-center text-muted-foreground">{`Pose ${index + 1}`}</p>
+        <div className="relative w-80 aspect-[4/5] border rounded-lg bg-card grid place-items-center overflow-hidden">
+            {isLoading ? (
+                <div className="flex flex-col items-center justify-center text-muted-foreground gap-2 text-center">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <p className="font-medium text-sm">Generando...</p>
+                </div>
+            ) : image ? (
+                <Image
+                    src={image}
+                    alt={`Generated pose ${index + 1}`}
+                    fill
+                    className="object-contain"
+                />
+            ) : (
+                <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-4">
+                    <ImageIcon className="h-12 w-12 mb-2" />
+                    <p className="text-sm font-medium">El resultado aparecerá aquí</p>
+                </div>
+            )}
+        </div>
     </div>
   );
 
   return (
-    <div className="flex-1 p-4 sm:p-6 md:p-8 flex flex-col space-y-8">
+    <div className="flex flex-1 flex-col p-4 sm:p-6 md:p-8 space-y-8">
        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             {/* Left: Avatar Upload */}
             <div className="space-y-4">
@@ -176,7 +179,7 @@ export default function AvatarPosesPage() {
                 <div className="flex flex-col gap-4">
                     {prompts.map((prompt, index) => (
                         <div key={index} className="space-y-2">
-                            <Label htmlFor={`prompt-${index}`} className="font-semibold">{`Prompt de Imagen ${index + 1}`}</Label>
+                            <Label htmlFor={`prompt-${index}`} className="font-semibold">{`Prompt de Pose ${index + 1}`}</Label>
                             <Textarea 
                                 id={`prompt-${index}`}
                                 value={prompt}
@@ -222,6 +225,7 @@ export default function AvatarPosesPage() {
                    {generatedImages.map((image, index) => (
                         <PoseResult 
                             key={index}
+                            index={index}
                             image={image}
                             isLoading={isGenerating}
                         />
@@ -230,16 +234,6 @@ export default function AvatarPosesPage() {
                 <ScrollBar orientation="horizontal" />
             </ScrollArea>
         </div>
-
-        {isGenerating && !generatedImages.some(img => img) && (
-             <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
-                <div className="flex flex-col items-center justify-center text-foreground gap-4 w-full">
-                    <Loader2 className="h-12 w-12 animate-spin" />
-                    <p className="font-medium text-lg">Creando tus poses...</p>
-                    <p className="text-sm text-muted-foreground">Esto puede tardar unos segundos.</p>
-                </div>
-             </div>
-        )}
     </div>
   );
 }
