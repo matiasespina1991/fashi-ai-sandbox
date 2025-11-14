@@ -228,7 +228,7 @@ export default function TryOnPage() {
               <AccordionItem value="item-1">
                 <AccordionTrigger>
                   <div className="flex items-center gap-2">
-                     <span>Editar Prompt</span>
+                     <span className="font-bold">Editar Prompt</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
@@ -292,3 +292,5 @@ export default function TryOnPage() {
     </div>
   );
 }
+
+    

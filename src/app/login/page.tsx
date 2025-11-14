@@ -15,20 +15,20 @@ export default function LoginPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  useEffect(() => {
-    // Workaround for a known Firebase bug that causes a long delay when the user closes the sign-in popup.
-    // This overrides the 8-second timeout to a more reasonable 1 second.
-    // See: https://github.com/firebase/firebase-js-sdk/issues/8061
-    (function () {
-      const originalSetTimeout = window.setTimeout;
-      window.setTimeout = function (fn: TimerHandler, delay?: number, ...args: any[]) {
-        if (delay === 8000 && fn.toString().includes('POPUP_CLOSED_BY_USER')) {
-          delay = 1000;
-        }
-        return originalSetTimeout(fn, delay, ...args);
-      };
-    })();
-  }, []);
+  // useEffect(() => {
+  //   // Workaround for a known Firebase bug that causes a long delay when the user closes the sign-in popup.
+  //   // This overrides the 8-second timeout to a more reasonable 1 second.
+  //   // See: https://github.com/firebase/firebase-js-sdk/issues/8061
+  //   (function () {
+  //     const originalSetTimeout = window.setTimeout;
+  //     window.setTimeout = function (fn: TimerHandler, delay?: number, ...args: any[]) {
+  //       if (delay === 8000 && fn.toString().includes('POPUP_CLOSED_BY_USER')) {
+  //         delay = 1000;
+  //       }
+  //       return originalSetTimeout(fn, delay, ...args);
+  //     };
+  //   })();
+  // }, []);
 
 
   useEffect(() => {
