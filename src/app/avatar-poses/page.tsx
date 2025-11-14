@@ -150,7 +150,7 @@ export default function AvatarPosesPage() {
     <div className="flex flex-1 flex-col p-4 sm:p-6 md:p-8 space-y-8">
        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             {/* Left: Avatar Upload */}
-            <div className="space-y-4 md:w-1/2 flex-shrink-0">
+            <div className="space-y-4">
                 <h3 className="text-lg font-semibold font-headline mb-1">1. Sube tu Avatar</h3>
                 <p className="text-sm text-muted-foreground">Añade la imagen base del avatar para generar las poses.</p>
                 <input
@@ -187,7 +187,7 @@ export default function AvatarPosesPage() {
             </div>
             
             {/* Right: Prompts */}
-            <div className="space-y-4 md:w-1/2 flex-shrink-0">
+            <div className="space-y-4">
                 <h3 className="text-lg font-semibold font-headline mb-1">2. Personaliza los Prompts</h3>
                 <p className="text-sm text-muted-foreground">Edita las instrucciones para cada una de las tres poses.</p>
                 <div className="flex flex-col gap-4">
@@ -276,5 +276,3 @@ export default function AvatarPosesPage() {
     </div>
   );
 }
-
-    
