@@ -251,7 +251,7 @@ export default function AvatarPosesPage() {
 
         {selectedImageForModal && (
           <Dialog open={!!selectedImageForModal} onOpenChange={(isOpen) => !isOpen && setSelectedImageForModal(null)}>
-              <DialogContent className="w-[90vw] h-[90vh] max-w-[90vw] bg-transparent border-none shadow-none p-0 outline-none flex items-center justify-center">
+              <DialogContent className="w-[90vw] h-[90vh] max-w-[90vw] bg-transparent border-none shadow-none p-0 outline-none flex items-center justify-center [&>button]:text-white [&>button]:opacity-80 [&>button:hover]:opacity-100 [&>button]:h-8 [&>button]:w-8 [&>button>svg]:h-8 [&>button>svg]:w-8 [&>button]:bg-transparent">
                   <ScrollArea className={`relative w-full h-full ${isZoomed ? 'overflow-auto' : 'overflow-hidden'}`}>
                     <button onClick={() => setIsZoomed(!isZoomed)} className={`relative w-full h-full outline-none flex items-center justify-center ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}>
                         <Image 
@@ -264,13 +264,10 @@ export default function AvatarPosesPage() {
                     </button>
                     <ScrollBar />
                   </ScrollArea>
-                  <DialogClose className="absolute right-4 top-4 rounded-full p-1 bg-black/50 text-white opacity-80 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground z-50">
-                    <X className="h-8 w-8" />
-                    <span className="sr-only">Close</span>
-                  </DialogClose>
               </DialogContent>
           </Dialog>
         )}
     </div>
   );
 }
+
