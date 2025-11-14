@@ -1,15 +1,16 @@
 
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ImagePlus, Loader2, PartyPopper, X, Sparkles, AlertTriangle } from 'lucide-react';
+import { ImagePlus, Loader2, PartyPopper, X, Sparkles, AlertTriangle, Wand2 } from 'lucide-react';
 import { startAvatarGeneration } from '@/actions/generate-avatar';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import removeBackground from "@imgly/background-removal";
 
 const defaultAvatarPrompt = `Transform this photo into a professional full-body avatar for virtual clothing try-on.
 
@@ -49,7 +50,9 @@ type FilePreview = {
 export default function AvatarCreationPage() {
   const [userImages, setUserImages] = useState<FilePreview[]>([]);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [imageWithoutBg, setImageWithoutBg] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isRemovingBackground, setIsRemovingBackground] = useState(false);
   const [prompt, setPrompt] = useState<string>(defaultAvatarPrompt);
   const { toast } = useToast();
 
@@ -77,7 +80,9 @@ export default function AvatarCreationPage() {
   const resetState = () => {
     setUserImages([]);
     setGeneratedImage(null);
+    setImageWithoutBg(null);
     setIsGenerating(false);
+    setIsRemovingBackground(false);
     setPrompt(defaultAvatarPrompt);
   }
 
@@ -93,6 +98,7 @@ export default function AvatarCreationPage() {
 
     setIsGenerating(true);
     setGeneratedImage(null);
+    setImageWithoutBg(null);
 
     try {
       const userImageDataUris = await Promise.all(userImages.map(g => fileToDataUri(g.file)));
@@ -118,6 +124,33 @@ export default function AvatarCreationPage() {
       setIsGenerating(false);
     }
   };
+
+  const handleRemoveBackground = useCallback(async () => {
+    if (!generatedImage) return;
+
+    setIsRemovingBackground(true);
+    try {
+      const blob = await fetch(generatedImage).then((res) => res.blob());
+      const resultBlob = await removeBackground(blob);
+      const resultUrl = URL.createObjectURL(resultBlob);
+      setImageWithoutBg(resultUrl);
+      toast({
+        title: "Fondo Eliminado",
+        description: "El fondo de tu avatar ha sido eliminado con éxito.",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error al Quitar Fondo",
+        description:
+          error.message || "No se pudo eliminar el fondo. Inténtalo de nuevo.",
+      });
+    } finally {
+      setIsRemovingBackground(false);
+    }
+  }, [generatedImage, toast]);
+
+  const displayedImage = imageWithoutBg || generatedImage;
 
   return (
     <div className="flex-1 p-4 sm:p-6 md:p-8 space-y-8">
@@ -185,19 +218,19 @@ export default function AvatarCreationPage() {
         </div>
 
         {/* Result Section */}
-        <div className="space-y-6">
+        <div className="space-y-4">
             <h3 className="text-lg font-semibold font-headline mb-1">2. Tu Avatar Generado</h3>
             <p className="text-sm text-muted-foreground mb-4">El resultado aparecerá aquí.</p>
             <div className="relative w-full aspect-[4/5] border rounded-lg bg-card flex items-center justify-center overflow-hidden">
-                {isGenerating ? (
+                {isGenerating || isRemovingBackground ? (
                     <div className="flex flex-col items-center justify-center text-muted-foreground gap-4 w-full">
                         <Loader2 className="h-10 w-10 animate-spin" />
-                        <p className="font-medium">Creando tu avatar...</p>
+                        <p className="font-medium">{isGenerating ? 'Creando tu avatar...' : 'Quitando fondo...'}</p>
                         <p className="text-sm text-muted-foreground">Esto puede tardar unos segundos.</p>
                     </div>
-                ) : generatedImage ? (
+                ) : displayedImage ? (
                     <Image
-                        src={generatedImage}
+                        src={displayedImage}
                         alt="Generated avatar"
                         fill
                         className="object-contain"
@@ -209,6 +242,26 @@ export default function AvatarCreationPage() {
                 </div>
                 )}
             </div>
+             {generatedImage && (
+              <div className="flex justify-start">
+                  <Button
+                      onClick={handleRemoveBackground}
+                      disabled={isRemovingBackground || !!imageWithoutBg}
+                  >
+                      {isRemovingBackground ? (
+                          <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Quitando fondo...
+                          </>
+                      ) : (
+                          <>
+                              <Wand2 className="mr-2 h-4 w-4" />
+                              Quitar fondo
+                          </>
+                      )}
+                  </Button>
+              </div>
+            )}
         </div>
       </div>
       
