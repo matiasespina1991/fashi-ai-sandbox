@@ -251,15 +251,19 @@ export default function AvatarPosesPage() {
 
         {selectedImageForModal && (
           <Dialog open={!!selectedImageForModal} onOpenChange={(isOpen) => !isOpen && setSelectedImageForModal(null)}>
-              <DialogContent className="w-[90vw] h-[90vh] max-w-[90vw] bg-transparent border-none shadow-none p-0 outline-none">
-                  <button onClick={() => setIsZoomed(!isZoomed)} className={`relative w-full h-full outline-none ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}>
-                      <Image 
-                          src={selectedImageForModal} 
-                          alt="Generated pose enlarged" 
-                          fill 
-                          className={isZoomed ? 'object-cover' : 'object-contain'}
-                      />
-                  </button>
+              <DialogContent className="w-[90vw] h-[90vh] max-w-[90vw] bg-transparent border-none shadow-none p-0 outline-none flex items-center justify-center">
+                  <ScrollArea className={`relative w-full h-full ${isZoomed ? 'overflow-auto' : 'overflow-hidden'}`}>
+                    <button onClick={() => setIsZoomed(!isZoomed)} className={`relative w-full h-full outline-none flex items-center justify-center ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}>
+                        <Image 
+                            src={selectedImageForModal} 
+                            alt="Generated pose enlarged" 
+                            width={1024}
+                            height={1792}
+                            className={`transition-all duration-300 ${isZoomed ? 'w-auto h-auto max-w-none max-h-none' : 'object-contain w-full h-full'}`}
+                        />
+                    </button>
+                    <ScrollBar />
+                  </ScrollArea>
                   <DialogClose className="absolute right-4 top-4 rounded-full p-1 bg-black/50 text-white opacity-80 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground z-50">
                     <X className="h-8 w-8" />
                     <span className="sr-only">Close</span>
@@ -270,5 +274,3 @@ export default function AvatarPosesPage() {
     </div>
   );
 }
-
-    
