@@ -5,7 +5,7 @@ import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { User, Loader2, PartyPopper, Sparkles, X, Image as ImageIcon } from 'lucide-react';
+import { User, Loader2, Sparkles, X, Image as ImageIcon } from 'lucide-react';
 import { startAvatarPosesGeneration } from '@/actions/generate-avatar-poses';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -221,7 +221,7 @@ export default function AvatarPosesPage() {
             <h3 className="text-lg font-semibold font-headline mb-1 text-center">3. Poses Generadas</h3>
             <p className="text-sm text-muted-foreground mb-4 text-center">Los resultados aparecerán aquí. Desliza si es necesario.</p>
             <ScrollArea className="w-full whitespace-nowrap rounded-md">
-                <div className="flex w-max space-x-6 pb-4">
+                <div className="flex w-max space-x-6 p-4">
                    {generatedImages.map((image, index) => (
                         <PoseResult 
                             key={index}
@@ -246,5 +246,3 @@ export default function AvatarPosesPage() {
     </div>
   );
 }
-
-    
