@@ -34,7 +34,7 @@ const prompt = ai.definePrompt({
   name: 'generateScenePromptPrompt',
   input: {schema: GenerateScenePromptInputSchema},
   output: {schema: GenerateScenePromptOutputSchema},
-  model: googleAI.model('gemini-1.5-flash'),
+  model: 'gemini-1.5-flash',
   prompt: `TASK: You are an expert scene describer for an AI image generator. Your job is to analyze the provided image and create a detailed text prompt that can be used to replicate the scene (pose, environment, lighting) with a NEW avatar.
 
 CRITICAL RULES:
