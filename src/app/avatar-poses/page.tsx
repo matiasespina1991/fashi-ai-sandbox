@@ -245,13 +245,13 @@ export default function AvatarPosesPage() {
 
         {selectedImageForModal && (
           <Dialog open={!!selectedImageForModal} onOpenChange={(isOpen) => !isOpen && setSelectedImageForModal(null)}>
-              <DialogContent className="max-w-4xl h-5/6">
+              <DialogContent className="w-[90vw] h-[90vh] max-w-[90vw] bg-transparent border-none shadow-none p-0">
                   <div className="relative w-full h-full">
                       <Image 
                           src={selectedImageForModal} 
                           alt="Generated pose enlarged" 
                           fill 
-                          className="object-contain py-4"
+                          className="object-contain"
                       />
                   </div>
               </DialogContent>
